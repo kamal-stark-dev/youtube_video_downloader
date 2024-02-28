@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y2Mate Downloader</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Poppins, Helvetica;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #f4f4f4;
+        }
+        form {
+            padding: 20px 40px;
+        }
+        .main-box {
+            padding: 20px 40px;
+            border: 1px solid #ccc;
+            width: 800px;
+            background: white;
+        }
+        #result {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #result img {
+            width: 500px;
+        }
+        #terms {
+            color: #616161;
+            margin-top: 0;
+            font-size: 14px;
+        }
+        input {
+            min-width: 200px;
+            width: 60%;
+            font-size: 18px;
+            padding: 8px;
+            outline: none;
+        }
+        #submit-btn {
+            padding: 8px 24px;
+            font-size: 18px;
+        }
+        #result a {
+            font-size: 18px;
+            padding: 8px 24px;
+            text-decoration: none;
+            color: white;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="heading">Y2Mate Video Downloader</h1>
+
+    <div class="main-box">
+
+        <form id="videoForm">
+            <input type="text" id="video_url" name="video_url" required placeholder="Enter or paste a valid video link">
+            <button type="submit" id="submit-btn">Enter</button>
+        </form>
+
+        <p id="terms">By using our services you except our Terms and Conditions.</p>
+
+        <div id="result">
+            <img id="thumbnail" src="">
+            <h3 id="video-title"></h3>
+            <a id="downloadLink"></a>
+        </div>
+
+    </div>
+
+    <!-- Script Link -->
+
+    <script>
+        const videoForm = document.getElementById('videoForm');
+        const thumbnail = document.getElementById('thumbnail');
+        const downloadLink = document.getElementById('downloadLink');
+        const videoTitle = document.getElementById('video-title');
+
+        videoForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(videoForm);
+            const videoUrl = formData.get('video_url');
+
+            const response = await fetch('/getLinks', {
+                method: 'POST',
+                body: new URLSearchParams({ video_url: videoUrl }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            const data = await response.json();
+            thumbnail.src = data.image_link;
+
+            downloadLink.textContent = `Download Video`;
+            downloadLink.href = `${data.download_link}`;
+            downloadLink.style.backgroundColor = 'green';
+            console.log(`${data.download_link}`);
+
+            videoTitle.textContent = `${data.video_title}`;
+        });
+    </script>
+</body>
+
+</html>
